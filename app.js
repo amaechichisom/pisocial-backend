@@ -11,7 +11,25 @@ require('dotenv').config()
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
 
+
+
 const app = express();
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    '*'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+  );
+  
+  next();
+});
+
+
 const store = new MongoDBStore({
   uri: process.env.MONGODB_CONNECTION,
   collection: 'sessions'
@@ -53,19 +71,7 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    '*'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
-  );
-  
-  next();
-});
+
 
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
