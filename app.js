@@ -61,12 +61,12 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://pisocial.netlify.app');
-  res.setHeader(
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header(
     'Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   );
-  res.setHeader(
+  res.header(
     'Access-Control-Allow-Methods',
     'OPTIONS, GET, POST, PUT, PATCH, DELETE'
   );
