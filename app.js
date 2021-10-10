@@ -17,11 +17,7 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
-const corsOptions = {
-  origin: '*'
-}
-
-app.use(cors(corsOptions))
+app.use(cors())
 
 const store = new MongoDBStore({
   uri: process.env.MONGODB_CONNECTION,
