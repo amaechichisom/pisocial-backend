@@ -3,11 +3,15 @@ const path = require('path');
 const Sentiment = require('sentiment');
 const sentiment = new Sentiment();
 
+const States = require('../data/state_abbr')
+
 const tweets = require('../data/election.json')
 
 const {validationResult} = require('express-validator/check');
 
 const User = require('../models/user');
+
+
 
 function checkWord(word, str) {
     const allowedSeparator = '\\\s,;"\'|';
@@ -25,7 +29,11 @@ const twitterSentiment = async(token) => {
         mentions: [],
         positive: [],
         negative: [],
-        neutral: []
+        neutral: [],
+        polarity: [],
+        subject: [],
+        states:{},
+        time: {}
     }
 
     tokens = token.split(" ")
@@ -33,24 +41,52 @@ const twitterSentiment = async(token) => {
     for (let i in tweets) {
         for (let j in tokens) {
             if (checkWord(tokens[j], tweets[i].tweet_text)) {
+                if (tweets[i].state){
+                    feed.states[States[tweets[i].state]] += 1
+                }
+                
+                let date = tweets[i].created_at.split("T")[0].toString()
+            
+                if(!feed.time.hasOwnProperty(date)){
+                    
+                    feed.time[date] = {
+                        'positive': 0,
+                        'negative': 0,
+                        'neutral' : 0
+
+                    }
+                
+                }
+
                 tweets[i].sentimentScore = sentiment
                     .analyze(tweets[i].tweet_text)
                     .score
                 feed
                     .mentions
                     .push(tweets[i])
+                feed
+                    .polarity
+                    .push(tweets[i].polarity)
+                feed
+                    .subject
+                    .push(tweets[i].subjectivity)
                 if (tweets[i].sentimentScore > 0) {
                     tweets[i].sentiment = "positive"
+                    
+                    feed.time[date]['positive'] += 1;
                     feed
                         .positive
                         .push(tweets[i])
                 } else if (tweets[i].sentimentScore < 0) {
-                  tweets[i].sentiment = "negative"
+                  tweets[i].sentiment = "negative";
+                  feed.time[date]['negative'] += 1;
                     feed
                         .negative
                         .push(tweets[i])
                 } else {
-                  tweets[i].sentiment = "neutral"
+                  tweets[i].sentiment = "neutral";
+                  feed.time[date]['neutral'] += 1
+                    
                     feed
                         .neutral
                         .push(tweets[i])

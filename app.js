@@ -8,28 +8,13 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 require('dotenv').config()
 
+const helmet = require('helmet');
+const compression = require('compression')
+
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
 
-
-
 const app = express();
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    '*'
-  );
-  res.setHeader(
-    'Access-Control-Allow-Methods',
-    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
-  );
-  
-  next();
-});
-
-
 const store = new MongoDBStore({
   uri: process.env.MONGODB_CONNECTION,
   collection: 'sessions'
@@ -71,10 +56,25 @@ app.use(
   })
 );
 
-
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+  );
+   
+  next();
+});
 
 app.use('/feed', feedRoutes);
 app.use('/auth', authRoutes);
+
+app.use(helmet());
+app.use(compression())
 
 app.use((error, req, res, next) => {
   console.log(error);
