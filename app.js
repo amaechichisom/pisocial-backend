@@ -17,7 +17,21 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
-app.use(cors())
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://pisocial.netlify.app');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
+  res.header(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+  );
+   
+  next();
+});
+
+// app.use(cors())
 
 const store = new MongoDBStore({
   uri: process.env.MONGODB_CONNECTION,
@@ -60,19 +74,7 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'https://pisocial.netlify.app');
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  res.header(
-    'Access-Control-Allow-Methods',
-    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
-  );
-   
-  next();
-});
+
 
 
 
