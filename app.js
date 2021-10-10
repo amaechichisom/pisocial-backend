@@ -9,7 +9,8 @@ const multer = require('multer');
 require('dotenv').config()
 
 const helmet = require('helmet');
-const compression = require('compression')
+const compression = require('compression');
+const cors = require('cors')
 
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
@@ -70,8 +71,16 @@ app.use((req, res, next) => {
   next();
 });
 
+const corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.use(cors(corsOptions))
+
+
 app.use('/feed', feedRoutes);
-app.use('/auth', authRoutes);
+app.use('/auth',authRoutes);
 
 app.use(helmet());
 app.use(compression())
