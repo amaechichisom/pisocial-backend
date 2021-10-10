@@ -16,6 +16,13 @@ const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
 
 const app = express();
+
+const corsOptions = {
+  origin: '*'
+}
+
+app.use(cors(corsOptions))
+
 const store = new MongoDBStore({
   uri: process.env.MONGODB_CONNECTION,
   collection: 'sessions'
@@ -71,12 +78,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const corsOptions = {
-  origin: '*',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
 
-app.use(cors(corsOptions))
 
 
 app.use('/feed', feedRoutes);
