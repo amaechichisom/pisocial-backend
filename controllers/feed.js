@@ -11,7 +11,7 @@ const {validationResult} = require('express-validator/check');
 
 const User = require('../models/user');
 
-
+//Helps to check if a word exists in a string of text
 
 function checkWord(word, str) {
     const allowedSeparator = '\\\s,;"\'|';
